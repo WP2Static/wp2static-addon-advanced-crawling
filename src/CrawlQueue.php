@@ -32,31 +32,23 @@ class CrawlQueue {
     ) : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static_urls';
         $wpdb->query( 'START TRANSACTION' );
-
         foreach ( $urls as $url ) {
-            if ( $crawl_start_time ) {
-                if ( $set_null ) {
-                    $query_str = "UPDATE $table_name SET crawled_time = NULL WHERE url = %s " .
-                        'AND crawled_time <= %s';
-                } else {
-                    $query_str = "UPDATE $table_name SET crawled_time = NULL WHERE url = %s" .
-                        ' AND (crawled_time IS NULL OR crawled_time <= %s)';
-                }
-                 $query = $wpdb->prepare( $query_str, $url, $crawl_start_time );
-            } else {
-                if ( $set_null ) {
-                    $query_str = "UPDATE $table_name SET crawled_time = NULL WHERE url = %s";
-                } else {
-                    $query_str = "UPDATE $table_name SET crawled_time = NOW() WHERE url = %s";
-                }
-                $query = $wpdb->prepare(
-                    $query_str,
+            $wpdb->query( $crawl_start_time
+                ? $wpdb->prepare(
+                    $set_null
+                        ? "UPDATE {$wpdb->prefix}wp2static_urls SET crawled_time = NULL WHERE url = %s AND crawled_time <= %s"
+                        : "UPDATE {$wpdb->prefix}wp2static_urls SET crawled_time = NULL WHERE url = %s AND (crawled_time IS NULL OR crawled_time <= %s)",
+                    $url,
+                    $crawl_start_time
+                )
+                : $wpdb->prepare(
+                    $set_null
+                        ? "UPDATE {$wpdb->prefix}wp2static_urls SET crawled_time = NULL WHERE url = %s"
+                        : "UPDATE {$wpdb->prefix}wp2static_urls SET crawled_time = NOW() WHERE url = %s",
                     $url
-                );
-            }
-            $wpdb->query( $query );
+                )
+           );
         }
         $wpdb->query( 'COMMIT' );
     }
