@@ -6,26 +6,26 @@ class Controller {
     public function run() : void {
         add_filter(
             'wp2static_add_menu_items',
-            [ 'WP2StaticAdvancedCrawling\Controller', 'addSubmenuPage' ]
+            [ self::class, 'addSubmenuPage' ]
         );
 
         add_filter(
             'wp2static_file_extensions_to_ignore',
-            [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticFileExtensionsToIgnore' ],
+            [ Detection::class, 'wp2staticFileExtensionsToIgnore' ],
             15,
             1
         );
 
         add_filter(
             'wp2static_filenames_to_ignore',
-            [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticFilenamesToIgnore' ],
+            [ Detection::class, 'wp2staticFilenamesToIgnore' ],
             15,
             1
         );
 
         add_filter(
             'wp2static_modify_initial_crawl_list',
-            [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticModifyInitialCrawlList' ],
+            [ Detection::class, 'wp2staticModifyInitialCrawlList' ],
             15,
             1
         );
@@ -88,14 +88,14 @@ class Controller {
 
         add_action(
             'wp2static_crawl',
-            [ 'WP2StaticAdvancedCrawling\Crawler', 'wp2staticCrawl' ],
+            [ Crawler::class, 'wp2staticCrawl' ],
             15,
             2
         );
 
         add_action(
             'wp2static_detect',
-            [ 'WP2StaticAdvancedCrawling\Detection', 'wp2staticDetect' ],
+            [ Detection::class, 'wp2staticDetect' ],
             15,
             2
         );
